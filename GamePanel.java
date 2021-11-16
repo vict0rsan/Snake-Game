@@ -186,14 +186,16 @@ public class GamePanel extends JPanel implements ActionListener {
         try {
             boolean success = root.createNewFile();
             if (success) {
-                FileWriter fileWriter = new FileWriter(root);
-                fileWriter.write(applesEaten);
+                FileWriter fileWriter = new FileWriter(root, true);
+                fileWriter.write(Integer.toString(applesEaten));
+                fileWriter.flush();
             } else {
                 Scanner reader = new Scanner(root);
                 if(reader.hasNextInt()) {
                     if (applesEaten > reader.nextInt()) {
                         FileWriter fileWriter = new FileWriter(root, false);
-                        fileWriter.write(applesEaten);
+                        fileWriter.write(Integer.toString(applesEaten));
+                        fileWriter.flush();
                     }
                 }
             }
