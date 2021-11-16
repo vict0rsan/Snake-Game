@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -24,6 +23,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     int bodyParts = 6;
     int applesEaten;
+    int maxScore = 0;
     int appleX;
     int appleY;
     char direction = 'R';
@@ -158,32 +158,30 @@ public class GamePanel extends JPanel implements ActionListener {
         metrics = getFontMetrics(g.getFont());
         g.drawString("Press ENTER to play again", (SCREEN_ANCHO - metrics.stringWidth("Press ENTER to playa again")) / 2, SCREEN_ALTO / 2 + 80);
 
-        int max = 0;
-        try {
-            String separator = System.getProperty("file.separator");
-            Scanner maxScore = new Scanner(new File(getUsersProjectRootDirectory() + separator + "maxScore.txt"));
+        saveMaxScore();
 
-            if (maxScore.hasNext()) {
-                int savedNumber = maxScore.nextInt();
-                max = savedNumber > applesEaten ? savedNumber : applesEaten;
+        try {
+            Scanner maxScoreReader = new Scanner(new File(getUsersProjectRootDirectoryForSavingMaxScore()));
+
+            if (maxScoreReader.hasNext()) {
+                int savedNumber = maxScoreReader.nextInt();
+                maxScore = savedNumber > applesEaten ? savedNumber : applesEaten;
             } else {
-                max = applesEaten;
+                maxScore = applesEaten;
             }
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e.getStackTrace());
-            //System.out.println("Error here");
         }
 
-        g.drawString("MAX SCORE: " + max, (SCREEN_ANCHO - metrics.stringWidth("MAX SCORE: " + max)) / 2, SCREEN_ALTO / 2 + 100);
+        g.drawString("MAX SCORE: " + maxScore, (SCREEN_ANCHO - metrics.stringWidth("MAX SCORE: " + maxScore)) / 2, SCREEN_ALTO / 2 + 115);
 
-        saveMaxScore();
+
     }
 
     private void saveMaxScore() {
 
-        String separator = System.getProperty("file.separator");
-        File root = new File(getUsersProjectRootDirectory() + separator + "maxScore.txt");
+        File root = new File(getUsersProjectRootDirectoryForSavingMaxScore());
 
         try {
             boolean success = root.createNewFile();
@@ -203,14 +201,20 @@ public class GamePanel extends JPanel implements ActionListener {
         } catch (IOException e) {
             System.out.println("Error creating file");
         }
+        finally {
+
+        }
+
+
 
     }
 
-    public String getUsersProjectRootDirectory() {
+    public String getUsersProjectRootDirectoryForSavingMaxScore() {
+        String separator = System.getProperty("file.separator");
         String envRootDir = System.getProperty("user.dir");
         Path rootDir = Paths.get(".").normalize().toAbsolutePath();
         if (rootDir.startsWith(envRootDir)) {
-            return rootDir.toString();
+            return rootDir.toString() + separator + "maxScore.txt";
         } else {
             throw new RuntimeException("Root dir not found in user directory.");
         }
