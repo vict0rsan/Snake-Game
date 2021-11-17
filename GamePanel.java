@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -180,35 +181,22 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void saveMaxScore() {
-
         File root = new File(getUsersProjectRootDirectoryForSavingMaxScore());
 
-        try {
-            boolean success = root.createNewFile();
-            if (success) {
-                FileWriter fileWriter = new FileWriter(root, true);
+        try (FileWriter fileWriter = new FileWriter(root);
+             Scanner reader = new Scanner(root)) {
+            if (root.createNewFile()) {
                 fileWriter.write(Integer.toString(applesEaten));
-                fileWriter.flush();
-            } else {
-                Scanner reader = new Scanner(root);
-                if(reader.hasNextInt()) {
-                    if (applesEaten > reader.nextInt()) {
-                        FileWriter fileWriter = new FileWriter(root, false);
-                        fileWriter.write(Integer.toString(applesEaten));
-                        fileWriter.flush();
-                    }
-                }
+            } else if(reader.hasNextInt() && applesEaten > reader.nextInt()){
+                fileWriter.write(Integer.toString(applesEaten));
+            } else{
+                RandomAccessFile cleaner = new RandomAccessFile(root, "rw");
+                cleaner.setLength(0);
+                fileWriter.write(Integer.toString(applesEaten));
             }
-
         } catch (IOException e) {
             System.out.println("Error creating file");
         }
-        finally {
-
-        }
-
-
-
     }
 
     public String getUsersProjectRootDirectoryForSavingMaxScore() {
@@ -216,7 +204,7 @@ public class GamePanel extends JPanel implements ActionListener {
         String envRootDir = System.getProperty("user.dir");
         Path rootDir = Paths.get(".").normalize().toAbsolutePath();
         if (rootDir.startsWith(envRootDir)) {
-            return rootDir.toString() + separator + "maxScore.txt";
+            return rootDir+ separator + "maxScore.txt";
         } else {
             throw new RuntimeException("Root dir not found in user directory.");
         }
