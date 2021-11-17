@@ -36,7 +36,7 @@ public class GamePanel extends JPanel implements ActionListener {
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_ANCHO, SCREEN_ALTO));
-        this.setBackground(Color.YELLOW.brighter());
+        this.setBackground(Color.BLACK);
         this.setFocusable(true); //hace que que los eventos incidan sobre el panel (hace que sea posible ponerle el foco)
         this.addKeyListener(new MyKeyAdapter());
         startGame();
@@ -66,11 +66,11 @@ public class GamePanel extends JPanel implements ActionListener {
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
                     g.setColor(Color.green.brighter());
-                    g.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+                    g.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)).brighter());
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
                 g.setColor(Color.RED);
-                g.setFont(new Font("Ink Free", Font.BOLD, 35));
+                g.setFont(new Font("Arial", Font.BOLD, 35));
                 FontMetrics metrics = getFontMetrics(g.getFont());
                 g.drawString("Score: " + applesEaten, (SCREEN_ANCHO - metrics.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
                 g.drawLine(0, 50, SCREEN_ANCHO, 50);
@@ -143,21 +143,21 @@ public class GamePanel extends JPanel implements ActionListener {
 
 
     public void gameOver(Graphics g) {
-        //GameOver text
-        g.setColor(Color.RED);
-        g.setFont(new Font("Ink Free", Font.BOLD, 75));
+        //GAMEOVER TEXT
+        g.setColor(Color.RED.brighter());
+        g.setFont(new Font("Arial", Font.BOLD, 75));
         FontMetrics metrics = getFontMetrics(g.getFont());
         g.drawString("GAME OVER", (SCREEN_ANCHO - metrics.stringWidth("GAME OVER")) / 2, SCREEN_ALTO / 2 - 20);
 
-        //score
-        g.setFont(new Font("Ink Free", Font.BOLD, 55));
+        //SCORE
+        g.setFont(new Font("Arial", Font.BOLD, 55));
         metrics = getFontMetrics(g.getFont());
-        g.drawString("Score:" + applesEaten, (SCREEN_ANCHO - metrics.stringWidth("Score:" + applesEaten)) / 2, SCREEN_ALTO / 2 + 40);
+        g.drawString("Score: " + applesEaten, (SCREEN_ANCHO - metrics.stringWidth("Score: " + applesEaten)) / 2, SCREEN_ALTO / 2 + 130);
 
         //PLAY AGAIN
-        g.setFont(new Font("Ink Free", Font.BOLD, 35));
+        g.setFont(new Font("Arial", Font.BOLD, 32));
         metrics = getFontMetrics(g.getFont());
-        g.drawString("Press ENTER to play again", (SCREEN_ANCHO - metrics.stringWidth("Press ENTER to playa again")) / 2, SCREEN_ALTO / 2 + 80);
+        g.drawString("Press SPACE BAR to play again", (SCREEN_ANCHO - metrics.stringWidth("Press SPACE BAR to playa again")) / 2, SCREEN_ALTO / 2 + 40);
 
         saveMaxScore();
 
@@ -175,7 +175,7 @@ public class GamePanel extends JPanel implements ActionListener {
             System.out.println(e.getStackTrace());
         }
 
-        g.drawString("MAX SCORE: " + maxScore, (SCREEN_ANCHO - metrics.stringWidth("MAX SCORE: " + maxScore)) / 2, SCREEN_ALTO / 2 + 115);
+        g.drawString("MAX SCORE: " + maxScore, (SCREEN_ANCHO - metrics.stringWidth("MAX SCORE: " + maxScore)) / 2, SCREEN_ALTO / 2 - 150 );
 
 
     }
