@@ -171,13 +171,11 @@ public class GamePanel extends JPanel implements ActionListener {
     private void saveMaxScore() {
         File root = new File(getUsersProjectRootDirectoryForSavingMaxScore());
 
-        try (FileWriter fileWriter = new FileWriter(root);
+        try (FileWriter fileWriter = new FileWriter(root, true);
              Scanner reader = new Scanner(root)) {
             if (root.createNewFile()) {
                 fileWriter.write(Integer.toString(applesEaten));
-            } else if(reader.hasNextInt() && applesEaten > reader.nextInt()){
-                fileWriter.write(Integer.toString(applesEaten));
-            } else{
+            }else if(reader.hasNextInt() && applesEaten > reader.nextInt()){
                 RandomAccessFile cleaner = new RandomAccessFile(root, "rw");
                 cleaner.setLength(0);
                 fileWriter.write(Integer.toString(applesEaten));
@@ -201,7 +199,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void retrieveMaxScore(){
         try(Scanner maxScoreReader = new Scanner(new File(getUsersProjectRootDirectoryForSavingMaxScore()))) {
-            if (maxScoreReader.hasNext()) {
+            if (maxScoreReader.hasNextInt()) {
                 int savedNumber = maxScoreReader.nextInt();
                 maxScore = savedNumber > applesEaten ? savedNumber : applesEaten;
             } else {
