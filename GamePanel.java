@@ -161,19 +161,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         saveMaxScore();
 
-        try {
-            Scanner maxScoreReader = new Scanner(new File(getUsersProjectRootDirectoryForSavingMaxScore()));
-
-            if (maxScoreReader.hasNext()) {
-                int savedNumber = maxScoreReader.nextInt();
-                maxScore = savedNumber > applesEaten ? savedNumber : applesEaten;
-            } else {
-                maxScore = applesEaten;
-            }
-
-        } catch (IOException e) {
-            System.out.println(e.getStackTrace());
-        }
+        retrieveMaxScore();
 
         g.drawString("MAX SCORE: " + maxScore, (SCREEN_ANCHO - metrics.stringWidth("MAX SCORE: " + maxScore)) / 2, SCREEN_ALTO / 2 - 150 );
 
@@ -193,6 +181,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 RandomAccessFile cleaner = new RandomAccessFile(root, "rw");
                 cleaner.setLength(0);
                 fileWriter.write(Integer.toString(applesEaten));
+                cleaner.close();
             }
         } catch (IOException e) {
             System.out.println("Error creating file");
@@ -207,6 +196,19 @@ public class GamePanel extends JPanel implements ActionListener {
             return rootDir+ separator + "maxScore.txt";
         } else {
             throw new RuntimeException("Root dir not found in user directory.");
+        }
+    }
+
+    public void retrieveMaxScore(){
+        try(Scanner maxScoreReader = new Scanner(new File(getUsersProjectRootDirectoryForSavingMaxScore()))) {
+            if (maxScoreReader.hasNext()) {
+                int savedNumber = maxScoreReader.nextInt();
+                maxScore = savedNumber > applesEaten ? savedNumber : applesEaten;
+            } else {
+                maxScore = applesEaten;
+            }
+        } catch (IOException e) {
+            System.out.println(e.getStackTrace());
         }
     }
 
